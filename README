@@ -1,13 +1,32 @@
-RefreshRepositoryApi
+Redmine Refresh Repository API Plugin
 ====================
 
-Introduction goes here.
+A simple Redmine plugin that exposes repository refresh calls.
 
+By default, Redmine does not automatically refresh commits from the repository. This can be fixed by adding a script that uses rails' script/runner to invoke Redmine commands to a Cron job or, if your set-up allows, to a post-commit hook. In some situations, these solutions just don't cut it. This plugin is designed to enable a remote (SCM) server to trigger repository refreshes in Redmine via HTTP.
 
-Example
+Installing this plugin adds the following routes to your Redmine installation:
+
+http://your.redmine-installation.org/repositories/refresh/project-identifier
+http://your.redmine-installation.org/repositories/refresh/project-identifier.xml
+
+GETting or POSTing to these will trigger Redmine to fetch the latest commits from the given repository.
+
+Usage
 =======
 
-Example goes here.
+Put the `refresh_repository_api' directory inside the vendor/plugins directory of your Redmine installation and restart the server.
+
+Create a post-commit hook in your SCM. How exactly this works depends on your SCM, but it usually boils down to creating a shell script containing the actions to perform. For a Subversion repository, it suffices to put:
+
+#!/bin/sh
+curl http://your.redmine-installation.org/repositories/refresh/project-identifier.xml?key=YOUR_KEY_HERE
+
+as an executable file called "post-commit" inside the hooks directory of your repository database.
+
+The API relies on Redmine's RSS keys to work. For a logged-in user, these can be found in any of the "Also available in: Atom" links throughout the Redmine User Interface. If, for instance, the link at the bottom of the Repository screen says:
+http://your.redmine-installation.org/repositories/revisions/project-identifier?format=atom&key=1uzti1m64oeXn28FI2nORxFOfUeGApHzKE6Ii4cf
+then 1uzti1m64oeXn28FI2nORxFOfUeGApHzKE6Ii4cf is your key and you should put it in YOUR_KEY_HERE.
 
 
 Copyright (c) 2009 Michel Jansen, released under the MIT license
