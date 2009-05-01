@@ -15,18 +15,23 @@ GETting or POSTing to these will trigger Redmine to fetch the latest commits fro
 Usage
 =======
 
-Put the `refresh_repository_api' directory inside the vendor/plugins directory of your Redmine installation and restart the server.
+Put the `refresh_repository_api’ directory inside the vendor/plugins directory of your Redmine installation and restart the server.
+The most elegant way to do this, is to use Rails’ plugin script. Inside your Redmine installation directory, perform:
+
+script/plugin install git://github.com/micheljansen/refresh_repository_api_plugin.git
+
+And restart the server.
 
 Create a post-commit hook in your SCM. How exactly this works depends on your SCM, but it usually boils down to creating a shell script containing the actions to perform. For a Subversion repository, it suffices to put:
 
 #!/bin/sh
 curl http://your.redmine-installation.org/repositories/refresh/project-identifier.xml?key=YOUR_KEY_HERE
+as an executable file called “post-commit” inside the hooks directory of your repository database.
 
-as an executable file called "post-commit" inside the hooks directory of your repository database.
-
-The API relies on Redmine's RSS keys to work. For a logged-in user, these can be found in any of the "Also available in: Atom" links throughout the Redmine User Interface. If, for instance, the link at the bottom of the Repository screen says:
+The API relies on Redmine’s RSS keys to work. For a logged-in user, these can be found in any of the “Also available in: Atom” links throughout the Redmine User Interface. If, for instance, the link at the bottom of the Repository screen says:
 http://your.redmine-installation.org/repositories/revisions/project-identifier?format=atom&key=1uzti1m64oeXn28FI2nORxFOfUeGApHzKE6Ii4cf
-then 1uzti1m64oeXn28FI2nORxFOfUeGApHzKE6Ii4cf is your key and you should put it in YOUR_KEY_HERE.
-
+then 1uzti1m64oeXn28FI2nORxFOfUeGApHzKE6Ii4cf is your key and you should put it instead of YOUR_KEY_HERE.
 
 Copyright (c) 2009 Michel Jansen, released under the MIT license
+http://micheljansen.org/projects/redmine-refresh-repository-api-plugin
+http://github.com/micheljansen/refresh_repository_api_plugin
