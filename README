@@ -32,6 +32,8 @@ The API relies on Redmine’s RSS keys to work. For a logged-in user, these can 
 http://your.redmine-installation.org/repositories/revisions/project-identifier?format=atom&key=1uzti1m64oeXn28FI2nORxFOfUeGApHzKE6Ii4cf
 then 1uzti1m64oeXn28FI2nORxFOfUeGApHzKE6Ii4cf is your key and you should put it instead of YOUR_KEY_HERE.
 
+It is safest to create a new user for this, but you can also use an existing account. Whichever you choose, make sure the user has rights to "Refresh changesets". This can be found in the "Roles and permissions" administration screen.
+
 Copyright (c) 2009 Michel Jansen, released under the MIT license
 http://micheljansen.org/projects/redmine-refresh-repository-api-plugin
 http://github.com/micheljansen/refresh_repository_api_plugin
