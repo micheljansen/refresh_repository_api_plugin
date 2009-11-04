@@ -22,6 +22,10 @@ script/plugin install git://github.com/micheljansen/refresh_repository_api_plugi
 
 And restart the server.
 
+Note that this line installs the latest version of the refresh_repository_api_plugin. If you are running redmine 0.8 stable, you'll want to install the the 0.1.0 version of this plugin as follows:
+
+script/plugin install -r "tag 0.1.0" git://github.com/micheljansen/refresh_repository_api_plugin.git
+
 Create a post-commit hook in your SCM. How exactly this works depends on your SCM, but it usually boils down to creating a shell script containing the actions to perform. For a Subversion repository, it suffices to put:
 
 #!/bin/sh
