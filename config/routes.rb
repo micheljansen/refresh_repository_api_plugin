@@ -3,7 +3,8 @@ ActionController::Routing::Routes.draw do |map|
                           :controller => 'refresh_repositories', 
                           :action => 'refresh'
     
-  map.connect 'repositories/refresh/:id.:format', 
+  map.connect 'repositories/refresh/:id.xml', 
                           :controller => 'refresh_repositories', 
-                          :action => 'refresh'
+                          :action => 'refresh',
+                          :format => 'atom'
 end
