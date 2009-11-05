@@ -1,21 +1,21 @@
 class RefreshRepositoriesController < ApplicationController
   unloadable
   
-  before_filter :find_repository
-  before_filter :find_project
   before_filter :authorize
   accept_key_auth :refresh
+  before_filter :find_repository
+  before_filter :find_project
   
   def refresh
     @last_changeset_before_refresh = 
           @repository.changesets.find(:first, 
                                       :limit => 1, 
                                       :order => "committed_on DESC")
-                                      
-    # check if new revisions have been committed in the repository
+    
+    # import all new revisions that were made since the last check
     @repository.fetch_changesets
     
-    # latest changesets
+    # list of all the new changesets that were imported
     @changesets = 
           @repository.changesets.find(:all, 
                                       :order => "committed_on DESC",
@@ -27,44 +27,59 @@ class RefreshRepositoriesController < ApplicationController
         flash[:notice] = "refreshed"
         redirect_to :controller=> :repositories, :action => :show, :id => @project
       end
+      f.atom do
+        render :xml => @changesets, :status => :ok
+      end
       f.xml do
         render :xml => @changesets, :status => :ok
       end
     end
   end
   
+  
   private
-    def find_project
+  
+  def find_project
+    begin
       @project = Project.find(params[:id])
     rescue ActiveRecord::RecordNotFound
-      render_404
+      render_404 and return false
     end
+  end
 
-    def find_repository
+  def find_repository
+    begin
       @project = Project.find(params[:id])
       @repository = @project.repository
       render_404 and return false unless @repository
     rescue ActiveRecord::RecordNotFound
-      render_404
+      render_404 and return false
     end
-    
-    def render_404
-      if params[:format] == "xml"
-        head :status => 404 and return false
-      else
-        return super
-      end
-    end
-    
-    def render_403
-      if params[:format] == "xml"
-        head :status => 403 and return false
-      else
-        return super
-      end
-    end
-    
+  end
   
-
+  def render_404
+    if params[:format] == "atom" || params[:format] == "xml"
+      head :status => 404 and return false
+    else
+      return super
+    end
+  end
+  
+  def render_403
+    if params[:format] == "atom" || params[:format] == "xml"
+      head :status => 403 and return false
+    else
+      return super
+    end
+  end
+  
+  def deny_access
+    if params[:format] == "atom" || params[:format] == "xml"
+      render_403 and return false
+    else
+      super
+    end
+  end
+  
 end
 
