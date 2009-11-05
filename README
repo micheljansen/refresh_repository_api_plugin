@@ -32,9 +32,9 @@ Create a post-commit hook in your SCM. How exactly this works depends on your SC
 curl http://your.redmine-installation.org/repositories/refresh/project-identifier.xml?key=YOUR_KEY_HERE
 as an executable file called “post-commit” inside the hooks directory of your repository database.
 
-The API relies on Redmine’s RSS keys to work. For a logged-in user, these can be found in any of the “Also available in: Atom” links throughout the Redmine User Interface. If, for instance, the link at the bottom of the Repository screen says:
-http://your.redmine-installation.org/repositories/revisions/project-identifier?format=atom&key=1uzti1m64oeXn28FI2nORxFOfUeGApHzKE6Ii4cf
-then 1uzti1m64oeXn28FI2nORxFOfUeGApHzKE6Ii4cf is your key and you should put it instead of YOUR_KEY_HERE.
+The API relies on Redmine’s RSS keys to work. For a logged-in user, these can be found in any of the “Also available in: Atom” links throughout the Redmine User Interface. If, for instance, the link at the bottom of the Projects screen says:
+http://your.redmine-installation.org/projects.atom?key=1fdfd238a475216c39a2160917bcf95954c7608e
+then 1fdfd238a475216c39a2160917bcf95954c7608e is your key and you should put it instead of YOUR_KEY_HERE.
 
 It is safest to create a new user for this, but you can also use an existing account. Whichever you choose, make sure the user has rights to "Refresh changesets". This can be found in the "Roles and permissions" administration screen.
 
