@@ -7,36 +7,42 @@ class RefreshRepositoriesController < ApplicationController
   before_filter :find_repository
   
   def refresh
-    @last_changeset_before_refresh = 
-          @repository.changesets.find(:first, 
-                                      :limit => 1, 
-                                      :order => "committed_on DESC")
+    begin
+      @last_changeset_before_refresh = 
+            @repository.changesets.find(:first, 
+                                        :limit => 1, 
+                                        :order => "committed_on DESC")
     
-    # import all new revisions that were made since the last check
-    @repository.fetch_changesets
+      # import all new revisions that were made since the last check
+      @repository.fetch_changesets
+      
+      # list of all the new changesets that were imported
+      @changesets = []
+      if(@last_changeset_before_refresh)
+        @changesets = 
+            @repository.changesets.find(:all, 
+                                        :order => "committed_on DESC",
+                                        :conditions => ["committed_on > ?",
+                                                        @last_changeset_before_refresh.committed_on])
+      end
     
-    # list of all the new changesets that were imported
-    @changesets = []
-    if(@last_changeset_before_refresh)
-      @changesets = 
-          @repository.changesets.find(:all, 
-                                      :order => "committed_on DESC",
-                                      :conditions => ["committed_on > ?",
-                                                      @last_changeset_before_refresh.committed_on])
+      respond_to do |f|
+        f.html do
+          flash[:notice] = "refreshed"
+          redirect_to :controller=> :repositories, :action => :show, :id => @project
+        end
+        f.atom do
+          render :xml => @changesets, :status => :ok
+        end
+        f.xml do
+          render :xml => @changesets, :status => :ok
+        end
+      end
+      
+    rescue => e
+      render_500
     end
     
-    respond_to do |f|
-      f.html do
-        flash[:notice] = "refreshed"
-        redirect_to :controller=> :repositories, :action => :show, :id => @project
-      end
-      f.atom do
-        render :xml => @changesets, :status => :ok
-      end
-      f.xml do
-        render :xml => @changesets, :status => :ok
-      end
-    end
   end
   
   
@@ -76,6 +82,15 @@ class RefreshRepositoriesController < ApplicationController
     end
   end
   
+  def render_500
+    if params[:format] == "atom" || params[:format] == "xml"
+      head :status => 500
+    else
+      render :template => "public/500.html", :status => 500
+    end
+    return false
+  end
+
   def deny_access
     if params[:format] == "atom" || params[:format] == "xml"
       render_403 and return false
