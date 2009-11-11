@@ -1,10 +1,10 @@
 class RefreshRepositoriesController < ApplicationController
   unloadable
   
+  before_filter :find_project
   before_filter :authorize
   accept_key_auth :refresh
   before_filter :find_repository
-  before_filter :find_project
   
   def refresh
     @last_changeset_before_refresh = 
