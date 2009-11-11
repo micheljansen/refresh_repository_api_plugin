@@ -16,11 +16,14 @@ class RefreshRepositoriesController < ApplicationController
     @repository.fetch_changesets
     
     # list of all the new changesets that were imported
-    @changesets = 
+    @changesets = []
+    if(@last_changeset_before_refresh)
+      @changesets = 
           @repository.changesets.find(:all, 
                                       :order => "committed_on DESC",
                                       :conditions => ["committed_on > ?",
                                                       @last_changeset_before_refresh.committed_on])
+    end
     
     respond_to do |f|
       f.html do
